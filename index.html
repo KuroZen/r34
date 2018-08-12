@@ -10,23 +10,69 @@
     <!-- Style -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
         crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ"
+        crossorigin="anonymous">
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/override.css">
 </head>
 
-<body>
-    <header>
+<body class="dark" ng-app="r34App" ng-controller="r34Ctrl" ng-init="getPosts()">
+    <header class="page-header">
         <h1>Rule34
             <small>Browsing Rule34 the stylish way.</small>
         </h1>
+        <section class="container dark">
+            <h2>Search
+                <small>Refine your results.</small>
+            </h2>
+            <form>
+                <label for="input_tag">Add tags:</label>
+                <div class="input-group mb-3">
+                    <input id="input_tag" type="text" class="form-control">
+                    <div class="input-group-append">
+                        <button class="btn btn-red" ng-click="addTag()">Add</button>
+                    </div>
+                </div>
+                <ul class="list-inline">
+                    <li class="list-inline-item" ng-repeat="tag in activeTags">
+                        <span class="badge badge-tag" ng-click="removeTag(tag)">{{tag}}</span>
+                    </li>
+                </ul>
+                <label for="sort_by">Sort by:</label>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="sort_by" id="sort_by_new" value="option1" checked>
+                    <label class="form-check-label" for="sort_by_new">New</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="sort_by" id="sort_by_score" value="option2">
+                    <label class="form-check-label" for="sort_by_score">Score</label>
+                </div>
+            </form>
+            <button class="btn btn-block btn-red" ng-click="getPosts()">Search</button>
+        </section>
     </header>
 
-    <main ng-app="r34App" ng-controller="r34Ctrl">
-        <div>
-            <p>{{result}}</p>
-        </div>
-
-        <div>
-            OtherImages
-        </div>
+    <main>
+        <section class="container dark">
+            <h2>Results</h2>
+            <ul class="list-group list-inline">
+                    <li class="list-group-item light-dark" ng-repeat="post in posts" ng-attr-id="{{post.id}}">
+                        <img src="{{post.file_url}}" alt="Image" class="img-fluid" ng-click="details(post.id)">
+        
+                        <div class="collapse details">
+                            <ul class="list-inline">
+                                <li class="list-inline-item" ng-repeat="tag in post.tags track by $index">
+                                    <span class="badge badge-tag" ng-click="addTag(tag)">{{tag}}</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+        </section>
+        
+        <button class="btn btn-block btn-red" ng-click="getMorePosts()">Load More</button>
     </main>
 
     <!-- Scripts -->

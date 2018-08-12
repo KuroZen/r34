@@ -1,0 +1,61 @@
+@font-face {
+    font-family: "FontAwesome";
+    font-weight: normal;
+    font-style: normal;
+    src: url("https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/fonts/fontawesome-webfont.eot?v=4.3.0");
+    src: url("https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/fonts/fontawesome-webfont.eot?#iefix&v=4.3.0") format("embedded-opentype"), url("https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/fonts/fontawesome-webfont.woff2?v=4.3.0") format("woff2"), url("https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/fonts/fontawesome-webfont.woff?v=4.3.0") format("woff"), url("https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/fonts/fontawesome-webfont.ttf?v=4.3.0") format("truetype"), url("https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/fonts/fontawesome-webfont.svg?v=4.3.0#fontawesomeregular") format("svg");
+}
+
+* {
+    font-family: 'Roboto', sans-serif;
+}
+
+section, li {
+    margin-bottom: 10px !important;
+}
+
+html,
+body {
+    background-color: black;
+}
+
+.dark {
+    background-color: black;
+    color: white;
+}
+
+.light-dark {
+    background-color: #333333;
+    padding:0px;
+}
+
+.details {
+    padding-left: 10px;
+    padding-top: 5px;
+}
+
+.badge-tag {
+    vertical-align: middle;
+    font-size: 1.2em;
+    background-color: black;
+    color: red;
+    border: red thin solid;
+    margin-top: 5px;
+}
+
+.badge-tag:hover,
+.btn-red:hover {
+    -webkit-transition: color 0.3s linear;
+    -moz-transition: color 0.3s linear;
+    -ms-transition: color 0.3s linear;
+    -o-transition: color 0.3s linear;
+    transition: color 0.3s linear;
+    color: white;
+    cursor: pointer;
+}
+
+.btn-red {
+    background-color: black;
+    color: red;
+    border: red thin solid;
+}
