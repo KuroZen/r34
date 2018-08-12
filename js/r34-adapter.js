@@ -28,7 +28,6 @@ app.controller('r34Ctrl', function ($scope, $http) {
         }
 
         $scope.pageId++;
-        console.log($scope.currentPost);
         $http.get(serviceUrl + "/posts?limit=" + pageSize + tags + "&pid=" + $scope.pageId)
             .then(function (response) {
                 $scope.posts.push(...response.data);

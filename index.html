@@ -58,20 +58,20 @@
         <section class="container dark">
             <h2>Results</h2>
             <ul class="list-group list-inline">
-                    <li class="list-group-item light-dark" ng-repeat="post in posts" ng-attr-id="{{post.id}}">
-                        <img src="{{post.file_url}}" alt="Image" class="img-fluid" ng-click="details(post.id)">
-        
-                        <div class="collapse details">
-                            <ul class="list-inline">
-                                <li class="list-inline-item" ng-repeat="tag in post.tags track by $index">
-                                    <span class="badge badge-tag" ng-click="addTag(tag)">{{tag}}</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-                </ul>
+                <li class="list-group-item light-dark" ng-repeat="post in posts" ng-attr-id="{{post.id}}">
+                    <img ng-src="{{post.file_url}}" alt="Image" class="img-fluid" ng-click="details(post.id)">
+
+                    <div class="collapse details">
+                        <ul class="list-inline">
+                            <li class="list-inline-item" ng-repeat="tag in post.tags track by $index">
+                                <span class="badge badge-tag" ng-click="addTag(tag)">{{tag}}</span>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
         </section>
-        
+
         <button class="btn btn-block btn-red" ng-click="getMorePosts()">Load More</button>
     </main>
 
