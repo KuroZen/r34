@@ -32,7 +32,7 @@ app.controller('r34Ctrl', function ($scope, $http) {
             .then(function (response) {
                 $scope.posts.push(...response.data);
             });
-    }
+    };
 
     $scope.details = function (postId) {
         let selector = "#" + postId + " > .collapse";
