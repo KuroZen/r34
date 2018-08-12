@@ -23,11 +23,17 @@
         <h1>Rule34
             <small>Browsing Rule34 the stylish way.</small>
         </h1>
+
+        <!-- Search -->
         <section class="container dark">
             <h2>Search
                 <small>Refine your results.</small>
             </h2>
+
+            <!-- Search parameters -->
             <form>
+
+                <!-- Tags -->
                 <label for="input_tag">Add tags:</label>
                 <div class="input-group mb-3">
                     <input id="input_tag" type="text" class="form-control">
@@ -40,6 +46,8 @@
                         <span class="badge badge-tag" ng-click="removeTag(tag)">{{tag}}</span>
                     </li>
                 </ul>
+
+                <!-- Sort by-->
                 <label for="sort_by">Sort by:</label>
                 <div class="form-check form-check-inline">
                     <input class="form-check-input" type="radio" name="sort_by" id="sort_by_new" value="option1" checked>
@@ -50,6 +58,8 @@
                     <label class="form-check-label" for="sort_by_score">Score</label>
                 </div>
             </form>
+
+            <!-- Get Results-->
             <button class="btn btn-block btn-red" ng-click="getPosts()">Search</button>
         </section>
     </header>
@@ -57,10 +67,16 @@
     <main>
         <section class="container dark">
             <h2>Results</h2>
+
+            <!-- Posts -->
             <ul class="list-group list-inline">
                 <li class="list-group-item light-dark" ng-repeat="post in posts" ng-attr-id="{{post.id}}">
-                    <img ng-src="{{post.file_url}}" alt="Image" class="img-fluid" ng-click="details(post.id)">
 
+                    <!-- Media -->
+                    <img ng-if="post.type==='image'" ng-src="{{post.file_url}}" alt="Image" class="img-fluid" ng-click="details(post.id)">
+                    <video ng-if="post.type==='video'" ng-src="{{post.file_url}}" alt="Video" class="img-fluid" ng-click="details(post.id)"></video>
+                    
+                    <!-- Details -->
                     <div class="collapse details">
                         <ul class="list-inline">
                             <li class="list-inline-item" ng-repeat="tag in post.tags track by $index">
@@ -70,10 +86,20 @@
                     </div>
                 </li>
             </ul>
-        </section>
 
-        <button class="btn btn-block btn-red" ng-click="getMorePosts()">Load More</button>
+            <!-- Load more posts -->
+            <button class="btn btn-block btn-red" ng-click="getMorePosts()">Load More</button>
+        </section>
     </main>
+
+    <footer class="page-footer">
+        <div class="d-flex justify-content-center">
+                <p>Hosted with Github Pages.</p>
+        </div>
+        <div class="d-flex justify-content-center">
+            <a href="https://github.com/KuroZen/r34">Github Repository</a>
+        </div>       
+    </footer>
 
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
