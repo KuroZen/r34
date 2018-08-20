@@ -17,41 +17,43 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/awesomplete/1.1.2/awesomplete.min.css" />
 
     <link rel="stylesheet" href="css/override.css">
+    <link rel="stylesheet" href="css/custom_checkbox.css">
 </head>
 
 <body class="dark" ng-app="r34App" ng-controller="r34Ctrl" ng-init="init()">
-    <header class="page-header">
-        <h1>Rule34
-            <small>Browsing Rule34 the stylish way.</small>
-        </h1>
+    <header class="page-header pt-4">
+        <h1>Browse Rule34</h1>
+    </header>
 
+    <main>
         <!-- Search -->
         <section class="container dark">
-            <h2>Search
-                <small>Refine your results.</small>
-            </h2>
+            <h2>Search</h2>
 
             <!-- Search parameters -->
             <form>
 
                 <!-- Tags -->
                 <label for="input_tag">Add tags:</label>
-                <div class="input-group mb-3">
-                    <input id="input_tag" type="text" class="form-control">
-                    <div class="input-group-append">
-                        <button class="btn btn-red" ng-click="addTag()">Add</button>
+                <div class="mb-3">
+                    <div class="input-group">
+                        <input id="input_tag" type="text" class="form-control">
+                        <div class="input-group-append">
+                            <button class="btn btn-red" ng-click="addTag()">Add</button>
+                        </div>
                     </div>
+                    <div class="tags d-flex flex-wrap pl-0 pr-0">
+                        <span class="badge badge-tag" ng-click="removeTag(tag)" ng-repeat="tag in activeTags track by $index">{{tag}}</span>
+                    </div>
+                    <small ng-if="activeTags.length > 0">Click a tag above to remove it. Click a tag under an image to add it.</small>
                 </div>
-                <ul class="list-inline">
-                    <li class="list-inline-item" ng-repeat="tag in activeTags">
-                        <span class="badge badge-tag" ng-click="removeTag(tag)">{{tag}}</span>
-                    </li>
-                </ul>
 
                 <!-- Sort by-->
                 <div class="form-check form-check-inline mb-3">
-                    <input class="form-check-input" type="checkbox" name="approved" id="approved" aria-describedby="help_approved">
-                    <label class="form-check-label" for="sort_by_new">Rated only</label>
+                    <label class="checkbox-container">Rated only
+                        <input type="checkbox" name="approved" id="approved">
+                        <span class="checkmark"></span>
+                    </label>
                 </div>
 
                 <!-- Page size-->
@@ -65,9 +67,8 @@
             <!-- Get Results-->
             <button class="btn btn-block btn-red" ng-click="getPosts('search')">Search</button>
         </section>
-    </header>
 
-    <main>
+        <!-- Results -->
         <section class="container dark" ng-if="posts.length > 0">
             <h2>Results</h2>
 
@@ -76,21 +77,18 @@
                 <li class="list-group-item light-dark" ng-repeat="post in posts" ng-attr-id="{{post.id}}">
 
                     <!-- Media -->
-                    <img ng-if="post.type==='image'" ng-src="{{post.file_url}}" alt="Image" class="img-fluid" ng-click="details(post.id)">
-                    <video controls loop ng-if="post.type==='video'" ng-src="{{post.file_url}}" alt="Video" class="img-fluid" ng-click="details(post.id)"></video>
+                        <img ng-if="post.type==='image'" ng-src="{{post.file_url}}" alt="Image" class="img-fluid" ng-click="details(post.id)">
+                        <video controls loop ng-if="post.type==='video'" ng-src="{{post.file_url}}" alt="Video" class="img-fluid" ng-click="details(post.id)"></video>
 
                     <!-- Details -->
                     <div class="collapse details">
-                        <div class="d-flex justify-content-between mr-2">
-                            <span>Rating: {{post.rating}}</span>
-                            <span>Creator: <a ng-href="{{post.creator_url}}">{{post.creator_id}}</a></span>
+                        <div class="info d-flex justify-content-between">
                             <span>Score: {{post.score}}</span>
+                            <span>Rating: {{post.rating.toUpperCase()}}</span>
                         </div>
-                        <ul class="list-inline">
-                            <li class="list-inline-item" ng-repeat="tag in post.tags track by $index">
-                                <span class="badge badge-tag" ng-click="addTag(tag)">{{tag}}</span>
-                            </li>
-                        </ul>
+                        <div class="tags d-flex flex-wrap">
+                            <span class="badge badge-tag" ng-class="{{activeTags.includes(tag) ? 'active' : 'inactive'}}" ng-click="addTag(tag)" ng-repeat="tag in post.tags track by $index">{{tag}}</span>
+                        </div>
                     </div>
                 </li>
             </ul>
@@ -102,10 +100,17 @@
 
     <footer class="page-footer">
         <div class="d-flex justify-content-center">
-            <p>Hosted with Github Pages.</p>
+            <p>
+                <a href="https://github.com/KuroZen/r34">Github Repository</a>
+            </p>
         </div>
         <div class="d-flex justify-content-center">
-            <a href="https://github.com/KuroZen/r34">Github Repository</a>
+            <p>Please, if you notice
+                <a href="https://github.com/KuroZen/r34/issues/new?template=bug_report.md">something isn't right</a>, or you
+                <a href="https://github.com/KuroZen/r34/issues/new?template=feature_request.md">want a feature</a> to be implemented take the time to let me know.</p>
+        </div>
+        <div class="d-flex justify-content-center">
+            <p>Hosted with Github Pages.</p>
         </div>
     </footer>
 

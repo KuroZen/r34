@@ -53,6 +53,9 @@ app.controller('r34Ctrl', function ($scope, $http) {
                 if (filtered && $scope.posts.length < $scope.pageSize) {
                     $scope.getPosts("append");
                 }
+            })
+            .catch(function(error) {
+                console.log(error);
             });
     };
 
@@ -64,6 +67,7 @@ app.controller('r34Ctrl', function ($scope, $http) {
     $scope.addTag = function (tag) {
         if (tag === undefined) {
             tag = $("#input_tag").val();
+            $("#input_tag").val("");
         }
 
         if (tag && tag != "" && !$scope.activeTags.includes(tag)) {
@@ -81,13 +85,24 @@ app.controller('r34Ctrl', function ($scope, $http) {
             .then(function (response) {
                 console.log(response.data);
                 $scope.awesomplete.list = response.data.map(tag => tag.name);
+            })
+            .catch(function(error) {
+                console.log(error);
             });
     };
 
     $scope.vote = function (postId, type) {
-        $http.get("index.php?page=post&s=vote&id=" + postId + "&type=" + type)
+        $http.get("https://rule34.xxx/index.php?page=post&s=vote&id=" + postId + "&type=" + type)
             .then(function (response) {
                 $scope.posts.find(post => post.id === postId).score = parseInt(response.data);
+            })
+            .catch(function(error) {
+                console.log(error);
             });
-    }
+
+        // for now
+        $("#" + postId + " .btn-vote").prop("disabled",true);
+        $(this).css({color: "red !important"});
+        $scope.posts.find(post => post.id === postId).score++;
+    };
 });

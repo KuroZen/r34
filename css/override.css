@@ -6,11 +6,21 @@
     src: url("https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/fonts/fontawesome-webfont.eot?#iefix&v=4.3.0") format("embedded-opentype"), url("https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/fonts/fontawesome-webfont.woff2?v=4.3.0") format("woff2"), url("https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/fonts/fontawesome-webfont.woff?v=4.3.0") format("woff"), url("https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/fonts/fontawesome-webfont.ttf?v=4.3.0") format("truetype"), url("https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/fonts/fontawesome-webfont.svg?v=4.3.0#fontawesomeregular") format("svg");
 }
 
-* {
+h1,
+h2,
+h3,
+h4,
+p,
+a,
+span,
+label,
+input,
+small {
     font-family: 'Roboto', sans-serif;
 }
 
-section, li {
+section,
+li {
     margin-bottom: 10px !important;
 }
 
@@ -25,22 +35,37 @@ body {
 }
 
 .light-dark {
+    border: none;
     background-color: #333333;
-    padding:0px;
+    padding: 0px;
 }
 
-.details {
-    padding-left: 10px;
-    padding-top: 5px;
+.info {
+    font-size: 1.2em;
+    padding: 5px;
+    padding-bottom: 0px;
+}
+
+.info span {
+    margin: 5px;
+}
+
+.tags {
+    padding: 5px;
 }
 
 .badge-tag {
     vertical-align: middle;
     font-size: 1.2em;
+    margin: 5px;
     background-color: black;
     color: red;
     border: red thin solid;
-    margin-top: 5px;
+}
+
+.badge-tag[ng-class="active"] {
+    color: orangered;
+    border: orangered thin solid;
 }
 
 .badge-tag:hover,
@@ -60,6 +85,28 @@ body {
     border: red thin solid;
 }
 
+.btn-download {
+    background-color: transparent;
+    color: white;
+    border: none;
+    margin: none;
+    padding: none;
+}
+
 .awesomplete {
     color: black;
+}
+
+h1,
+h2,
+h4 {
+    text-align: center;
+}
+
+section {
+    margin-top: 20px;
+}
+
+footer {
+    text-align: center;
 }
