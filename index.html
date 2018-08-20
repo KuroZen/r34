@@ -13,12 +13,13 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ"
         crossorigin="anonymous">
 
-    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/awesomplete/1.1.2/awesomplete.min.css" />
 
     <link rel="stylesheet" href="css/override.css">
 </head>
 
-<body class="dark" ng-app="r34App" ng-controller="r34Ctrl" ng-init="getPosts()">
+<body class="dark" ng-app="r34App" ng-controller="r34Ctrl" ng-init="init()">
     <header class="page-header">
         <h1>Rule34
             <small>Browsing Rule34 the stylish way.</small>
@@ -48,24 +49,26 @@
                 </ul>
 
                 <!-- Sort by-->
-                <label for="sort_by">Sort by:</label>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="sort_by" id="sort_by_new" value="option1" checked>
-                    <label class="form-check-label" for="sort_by_new">New</label>
+                <div class="form-check form-check-inline mb-3">
+                    <input class="form-check-input" type="checkbox" name="approved" id="approved" aria-describedby="help_approved">
+                    <label class="form-check-label" for="sort_by_new">Rated only</label>
                 </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="sort_by" id="sort_by_score" value="option2">
-                    <label class="form-check-label" for="sort_by_score">Score</label>
+
+                <!-- Page size-->
+                <div class="form-group mb-3">
+                    <label for="input_pageSize">Images per page:</label>
+                    <input id="input_pageSize" type="number" min="1" max="50" class="form-control" aria-describedby="help_pageSize" ng-model="pageSize">
+                    <small id="help_pageSize">How many per load? (capped at 50)</small>
                 </div>
             </form>
 
             <!-- Get Results-->
-            <button class="btn btn-block btn-red" ng-click="getPosts()">Search</button>
+            <button class="btn btn-block btn-red" ng-click="getPosts('search')">Search</button>
         </section>
     </header>
 
     <main>
-        <section class="container dark">
+        <section class="container dark" ng-if="posts.length > 0">
             <h2>Results</h2>
 
             <!-- Posts -->
@@ -74,10 +77,15 @@
 
                     <!-- Media -->
                     <img ng-if="post.type==='image'" ng-src="{{post.file_url}}" alt="Image" class="img-fluid" ng-click="details(post.id)">
-                    <video ng-if="post.type==='video'" ng-src="{{post.file_url}}" alt="Video" class="img-fluid" ng-click="details(post.id)"></video>
-                    
+                    <video controls loop ng-if="post.type==='video'" ng-src="{{post.file_url}}" alt="Video" class="img-fluid" ng-click="details(post.id)"></video>
+
                     <!-- Details -->
                     <div class="collapse details">
+                        <div class="d-flex justify-content-between mr-2">
+                            <span>Rating: {{post.rating}}</span>
+                            <span>Creator: <a ng-href="{{post.creator_url}}">{{post.creator_id}}</a></span>
+                            <span>Score: {{post.score}}</span>
+                        </div>
                         <ul class="list-inline">
                             <li class="list-inline-item" ng-repeat="tag in post.tags track by $index">
                                 <span class="badge badge-tag" ng-click="addTag(tag)">{{tag}}</span>
@@ -88,17 +96,17 @@
             </ul>
 
             <!-- Load more posts -->
-            <button class="btn btn-block btn-red" ng-click="getMorePosts()">Load More</button>
+            <button class="btn btn-block btn-red" ng-if="posts.length > 0" ng-click="getPosts('append')">Load More</button>
         </section>
     </main>
 
     <footer class="page-footer">
         <div class="d-flex justify-content-center">
-                <p>Hosted with Github Pages.</p>
+            <p>Hosted with Github Pages.</p>
         </div>
         <div class="d-flex justify-content-center">
             <a href="https://github.com/KuroZen/r34">Github Repository</a>
-        </div>       
+        </div>
     </footer>
 
     <!-- Scripts -->
@@ -110,6 +118,8 @@
         crossorigin="anonymous"></script>
 
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.2/angular.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/awesomplete/1.1.2/awesomplete.min.js"></script>
 
     <script src="js/r34-adapter.js"></script>
 </body>

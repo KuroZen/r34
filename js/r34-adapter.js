@@ -1,36 +1,58 @@
 // config
 const serviceUrl = "https://r34-json-api.herokuapp.com";
-const pageSize = 12;
+const autoCompleteUrl = "https://rule34.xxx/autocomplete.php";
 
 // angular
 var app = angular.module('r34App', []);
 app.controller('r34Ctrl', function ($scope, $http) {
-    $scope.activeTags = [];
-    $scope.pageId = 0;
-
-    $scope.getPosts = function () {
-        let tags = "";
-        if ($scope.activeTags.length > 0) {
-            tags = "&tags=" + $scope.activeTags.join("+");
-        }
-
+    $scope.init = function () {
+        $scope.activeTags = [];
         $scope.pageId = 0;
-        $http.get(serviceUrl + "/posts?limit=" + pageSize + tags)
-            .then(function (response) {
-                $scope.posts = response.data;
-            });
+        $scope.pageSize = 10;
+
+        var input = document.getElementById("input_tag");
+        input.addEventListener("input", function () {
+            $scope.getSuggestions();
+        });
+        $scope.awesomplete = new Awesomplete(input, {
+            minChars: 3,
+            maxItems: 5
+        });
     };
 
-    $scope.getMorePosts = function () {
+    $scope.getPosts = function (mode) {
         let tags = "";
+        let page = "";
         if ($scope.activeTags.length > 0) {
             tags = "&tags=" + $scope.activeTags.join("+");
         }
 
-        $scope.pageId++;
-        $http.get(serviceUrl + "/posts?limit=" + pageSize + tags + "&pid=" + $scope.pageId)
+        if (mode === "append") {
+            $scope.pageId++;
+            page = "&pid=" + $scope.pageId;
+        } else {
+            $scope.pageId = 0;
+        }
+
+        $http.get(serviceUrl + "/posts?limit=" + $scope.pageSize + tags + page)
             .then(function (response) {
-                $scope.posts.push(...response.data);
+                let posts = response.data;
+
+                let filtered = false;
+                if ($('#approved').prop('checked')) {
+                    filtered = true;
+                    posts = posts.filter(post => post.score > 0);
+                }
+
+                if (mode === "append") {
+                    $scope.posts.push(...posts);
+                } else {
+                    $scope.posts = posts;
+                }
+
+                if (filtered && $scope.posts.length < $scope.pageSize) {
+                    $scope.getPosts("append");
+                }
             });
     };
 
@@ -53,7 +75,19 @@ app.controller('r34Ctrl', function ($scope, $http) {
         $scope.activeTags.splice($scope.activeTags.indexOf(tag), 1);
     };
 
-    $scope.loadMore = function () {
-
+    $scope.getSuggestions = function () {
+        let search = $("#input_tag").val() + "*";
+        $http.get(serviceUrl + "/tags?limit=5&name=" + search)
+            .then(function (response) {
+                console.log(response.data);
+                $scope.awesomplete.list = response.data.map(tag => tag.name);
+            });
     };
+
+    $scope.vote = function (postId, type) {
+        $http.get("index.php?page=post&s=vote&id=" + postId + "&type=" + type)
+            .then(function (response) {
+                $scope.posts.find(post => post.id === postId).score = parseInt(response.data);
+            });
+    }
 });
