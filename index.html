@@ -16,8 +16,8 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/awesomplete/1.1.2/awesomplete.min.css" />
 
+    <link rel="stylesheet" href="css/bootstrap-switch.min.css">
     <link rel="stylesheet" href="css/override.css">
-    <link rel="stylesheet" href="css/custom_checkbox.css">
 </head>
 
 <body class="dark" ng-app="r34App" ng-controller="r34Ctrl" ng-init="init()">
@@ -50,10 +50,8 @@
 
                 <!-- Sort by-->
                 <div class="form-check form-check-inline mb-3">
-                    <label class="checkbox-container">Rated only
-                        <input type="checkbox" name="approved" id="approved">
-                        <span class="checkmark"></span>
-                    </label>
+                    <input type="checkbox" name="approved" id="approved">
+                    <label for="approved" class="ml-2 mt-2">Only show rated</label>
                 </div>
 
                 <!-- Page size-->
@@ -77,8 +75,8 @@
                 <li class="list-group-item light-dark" ng-repeat="post in posts" ng-attr-id="{{post.id}}">
 
                     <!-- Media -->
-                        <img ng-if="post.type==='image'" ng-src="{{post.file_url}}" alt="Image" class="img-fluid" ng-click="details(post.id)">
-                        <video controls loop ng-if="post.type==='video'" ng-src="{{post.file_url}}" alt="Video" class="img-fluid" ng-click="details(post.id)"></video>
+                    <img ng-if="post.type==='image'" ng-src="{{post.file_url}}" alt="Image" class="img-fluid" ng-click="details(post.id)">
+                    <video controls loop ng-if="post.type==='video'" ng-src="{{post.file_url}}" alt="Video" class="img-fluid" ng-click="details(post.id)"></video>
 
                     <!-- Details -->
                     <div class="collapse details">
@@ -125,6 +123,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.2/angular.min.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/awesomplete/1.1.2/awesomplete.min.js"></script>
+
+    <script src="js/bootstrap-switch.min.js"></script>
 
     <script src="js/r34-adapter.js"></script>
 </body>

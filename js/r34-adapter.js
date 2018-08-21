@@ -18,6 +18,8 @@ app.controller('r34Ctrl', function ($scope, $http) {
             minChars: 3,
             maxItems: 5
         });
+
+        $("#approved").bootstrapSwitch();
     };
 
     $scope.getPosts = function (mode) {
