@@ -3,42 +3,58 @@ const serviceUrl = "https://r34-json-api.herokuapp.com";
 const autoCompleteUrl = "https://rule34.xxx/autocomplete.php";
 
 // angular
-var app = angular.module('r34App', []);
-app.controller('r34Ctrl', function ($scope, $http) {
-    $scope.init = function () {
-        $scope.activeTags = [];
-        $scope.pageId = 0;
-        $scope.pageSize = 10;
+var app = angular.module('r34App', ['infinite-scroll']);
+app.controller('r34Ctrl', function ($http) {
+    var crtl = this;
 
+    // init function
+    crtl.init = function () {
+
+        // init variables
+        crtl.activeTags = [];
+        crtl.pageId = 0;
+        crtl.pageSize = 10;
+        crtl.noImagesLeft = false;
+        crtl.lastScroll = 0;
+
+        // init awesomplete
         var input = document.getElementById("input_tag");
         input.addEventListener("input", function () {
-            $scope.getSuggestions();
+            crtl.getSuggestions();
         });
-        $scope.awesomplete = new Awesomplete(input, {
+        crtl.awesomplete = new Awesomplete(input, {
             minChars: 3,
-            maxItems: 5
+            maxItems: 10
         });
 
-        $("#approved").bootstrapSwitch();
+        // init switches
+        $(".switch").bootstrapSwitch();
     };
 
-    $scope.getPosts = function (mode) {
+    // get posts
+    crtl.getPosts = function (mode) {
+        crtl.lastScroll = Date.now();
         let tags = "";
         let page = "";
-        if ($scope.activeTags.length > 0) {
-            tags = "&tags=" + $scope.activeTags.join("+");
+        if (crtl.activeTags.length > 0) {
+            tags = "&tags=" + crtl.activeTags.join("+");
         }
 
         if (mode === "append") {
-            $scope.pageId++;
-            page = "&pid=" + $scope.pageId;
+            crtl.pageId++;
+            page = "&pid=" + crtl.pageId;
         } else {
-            $scope.pageId = 0;
+            crtl.pageId = 0;
+            crtl.noImagesLeft = false;
         }
 
-        $http.get(serviceUrl + "/posts?limit=" + $scope.pageSize + tags + page)
+        $http.get(serviceUrl + "/posts?limit=" + crtl.pageSize + tags + page)
             .then(function (response) {
                 let posts = response.data;
+
+                if (posts.length === 0) {
+                    crtl.noImagesLeft = true;
+                }
 
                 let filtered = false;
                 if ($('#approved').prop('checked')) {
@@ -47,64 +63,78 @@ app.controller('r34Ctrl', function ($scope, $http) {
                 }
 
                 if (mode === "append") {
-                    $scope.posts.push(...posts);
+                    crtl.posts.push(...posts);
                 } else {
-                    $scope.posts = posts;
+                    crtl.posts = posts;
                 }
 
-                if (filtered && $scope.posts.length < $scope.pageSize) {
-                    $scope.getPosts("append");
+                if (filtered && crtl.posts.length < crtl.pageSize) {
+                    crtl.getPosts("append");
                 }
             })
-            .catch(function(error) {
+            .catch(function (error) {
                 console.log(error);
             });
     };
 
-    $scope.details = function (postId) {
+    // collapse details
+    crtl.details = function (postId) {
         let selector = "#" + postId + " > .collapse";
         $(selector).collapse("toggle");
     };
 
-    $scope.addTag = function (tag) {
+    // add a tag to selection
+    crtl.addTag = function (tag) {
         if (tag === undefined) {
             tag = $("#input_tag").val();
             $("#input_tag").val("");
         }
 
-        if (tag && tag != "" && !$scope.activeTags.includes(tag)) {
-            $scope.activeTags.push(tag);
+        if (tag && tag != "" && !crtl.activeTags.includes(tag)) {
+            crtl.activeTags.push(tag);
         }
     };
 
-    $scope.removeTag = function (tag) {
-        $scope.activeTags.splice($scope.activeTags.indexOf(tag), 1);
+    // remove a tag from selection
+    crtl.removeTag = function (tag) {
+        crtl.activeTags.splice(crtl.activeTags.indexOf(tag), 1);
     };
 
-    $scope.getSuggestions = function () {
+    // get tags for awesomplete
+    crtl.getSuggestions = function () {
         let search = $("#input_tag").val() + "*";
-        $http.get(serviceUrl + "/tags?limit=5&name=" + search)
-            .then(function (response) {
-                console.log(response.data);
-                $scope.awesomplete.list = response.data.map(tag => tag.name);
-            })
-            .catch(function(error) {
-                console.log(error);
-            });
+        if (search.length > crtl.awesomplete.minChars) {
+            $http.get(serviceUrl + "/tags?limit=" + crtl.awesomplete.maxItems + "&name=" + search)
+                .then(function (response) {
+                    crtl.awesomplete.list = response.data.map(tag => tag.name);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        }
     };
 
-    $scope.vote = function (postId, type) {
+    crtl.vote = function (postId, type) {
         $http.get("https://rule34.xxx/index.php?page=post&s=vote&id=" + postId + "&type=" + type)
             .then(function (response) {
-                $scope.posts.find(post => post.id === postId).score = parseInt(response.data);
+                crtl.posts.find(post => post.id === postId).score = parseInt(response.data);
             })
-            .catch(function(error) {
+            .catch(function (error) {
                 console.log(error);
             });
+    };
 
-        // for now
-        $("#" + postId + " .btn-vote").prop("disabled",true);
-        $(this).css({color: "red !important"});
-        $scope.posts.find(post => post.id === postId).score++;
+    // load more posts
+    crtl.infiniteScroll = function () {
+        let now = Date.now();
+        if (now - crtl.lastScroll > 1000) {
+            crtl.getPosts("append");
+            crtl.lastScroll = now;
+        }
+    };
+
+    // check if infinite-scroll should be disabled
+    crtl.infiniteScrollDisabled = function () {
+        return $("#infiniteScroll").prop('checked') !== true || crtl.noImagesLeft;
     };
 });

@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="css/override.css">
 </head>
 
-<body class="dark" ng-app="r34App" ng-controller="r34Ctrl" ng-init="init()">
+<body class="dark" ng-app="r34App" ng-controller="r34Ctrl as ctrl" ng-init="ctrl.init()">
     <header class="page-header pt-4">
         <h1>Browse Rule34</h1>
     </header>
@@ -39,44 +39,46 @@
                     <div class="input-group">
                         <input id="input_tag" type="text" class="form-control">
                         <div class="input-group-append">
-                            <button class="btn btn-red" ng-click="addTag()">Add</button>
+                            <button class="btn btn-red" ng-click="ctrl.addTag()">Add</button>
                         </div>
                     </div>
                     <div class="tags d-flex flex-wrap pl-0 pr-0">
-                        <span class="badge badge-tag" ng-click="removeTag(tag)" ng-repeat="tag in activeTags track by $index">{{tag}}</span>
+                        <span class="badge badge-tag" ng-click="ctrl.removeTag(tag)" ng-repeat="tag in ctrl.activeTags track by $index">{{tag}}</span>
                     </div>
-                    <small ng-if="activeTags.length > 0">Click a tag above to remove it. Click a tag under an image to add it.</small>
+                    <small ng-if="ctrl.activeTags.length > 0">Click a tag above to remove it. Click a tag under an image to add it.</small>
                 </div>
 
                 <!-- Sort by-->
                 <div class="form-check form-check-inline mb-3">
-                    <input type="checkbox" name="approved" id="approved">
+                    <input type="checkbox" name="approved" id="approved" class="switch">
                     <label for="approved" class="ml-2 mt-2">Only show rated</label>
                 </div>
 
                 <!-- Page size-->
                 <div class="form-group mb-3">
                     <label for="input_pageSize">Images per page:</label>
-                    <input id="input_pageSize" type="number" min="1" max="50" class="form-control" aria-describedby="help_pageSize" ng-model="pageSize">
+                    <input id="input_pageSize" type="number" min="1" max="50" class="form-control" aria-describedby="help_pageSize" ng-model="ctrl.pageSize">
                     <small id="help_pageSize">How many per load? (capped at 50)</small>
                 </div>
             </form>
 
             <!-- Get Results-->
-            <button class="btn btn-block btn-red" ng-click="getPosts('search')">Search</button>
+            <button class="btn btn-block btn-red" ng-click="ctrl.getPosts('search')">Search</button>
+            <input type="checkbox" name="infiniteScroll" id="infiniteScroll" class="switch">
+            <label for="approved" class="ml-2 mt-2">Infinite scroll</label>
         </section>
 
         <!-- Results -->
-        <section class="container dark" ng-if="posts.length > 0">
+        <section class="container dark" ng-if="ctrl.posts.length > 0" infinite-scroll="infiniteScroll()" infinite-scroll-disabled="infiniteScrollDisabled()">
             <h2>Results</h2>
 
             <!-- Posts -->
             <ul class="list-group list-inline">
-                <li class="list-group-item light-dark" ng-repeat="post in posts" ng-attr-id="{{post.id}}">
+                <li class="list-group-item light-dark" ng-repeat="post in ctrl.posts" ng-attr-id="{{post.id}}">
 
                     <!-- Media -->
-                    <img ng-if="post.type==='image'" ng-src="{{post.file_url}}" alt="Image" class="img-fluid" ng-click="details(post.id)">
-                    <video controls loop ng-if="post.type==='video'" ng-src="{{post.file_url}}" alt="Video" class="img-fluid" ng-click="details(post.id)"></video>
+                    <img ng-if="post.type==='image'" ng-src="{{post.file_url}}" alt="Image" class="img-fluid" ng-click="ctrl.details(post.id)">
+                    <video controls loop ng-if="post.type==='video'" ng-src="{{post.file_url}}" alt="Video" class="img-fluid" ng-click="ctrl.details(post.id)"></video>
 
                     <!-- Details -->
                     <div class="collapse details">
@@ -85,14 +87,19 @@
                             <span>Rating: {{post.rating.toUpperCase()}}</span>
                         </div>
                         <div class="tags d-flex flex-wrap">
-                            <span class="badge badge-tag" ng-class="{{activeTags.includes(tag) ? 'active' : 'inactive'}}" ng-click="addTag(tag)" ng-repeat="tag in post.tags track by $index">{{tag}}</span>
+                            <span class="badge badge-tag" ng-class="{{ctrl.activeTags.includes(tag) ? 'active' : 'inactive'}}" ng-click="ctrl.addTag(tag)" ng-repeat="tag in post.tags track by $index">{{tag}}</span>
                         </div>
                     </div>
                 </li>
+
+                <li ng-if="ctrl.noImagesLeft" class="pt-3">
+                    <h4>No posts left...</h4>
+                </li>
             </ul>
 
+
             <!-- Load more posts -->
-            <button class="btn btn-block btn-red" ng-if="posts.length > 0" ng-click="getPosts('append')">Load More</button>
+            <button class="btn btn-block btn-red" ng-if="!ctrl.noImagesLeft" ng-click="ctrl.getPosts('append')">Load More</button>
         </section>
     </main>
 
@@ -121,6 +128,7 @@
         crossorigin="anonymous"></script>
 
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.2/angular.min.js"></script>
+    <script src="js/ng-infinite-scroll.min.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/awesomplete/1.1.2/awesomplete.min.js"></script>
 
