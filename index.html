@@ -7,15 +7,29 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Rule34 Browser</title>
 
-    <!-- Style -->
+    <!-- Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-124355256-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+        gtag('config', 'UA-124355256-1');
+    </script>
+
+    <!-- Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
         crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ"
         crossorigin="anonymous">
 
+    <!-- Fonts -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/awesomplete/1.1.2/awesomplete.min.css" />
 
+    <!-- Custom Styles-->
     <link rel="stylesheet" href="css/bootstrap-switch.min.css">
     <link rel="stylesheet" href="css/override.css">
 </head>
@@ -87,7 +101,8 @@
                             <span>Rating: {{post.rating.toUpperCase()}}</span>
                         </div>
                         <div class="tags d-flex flex-wrap">
-                            <span class="badge badge-tag" ng-class="{{ctrl.activeTags.includes(tag) ? 'active' : 'inactive'}}" ng-click="ctrl.addTag(tag)" ng-repeat="tag in post.tags track by $index">{{tag}}</span>
+                            <span class="badge badge-tag" ng-class="{{ctrl.activeTags.includes(tag) ? 'active' : 'inactive'}}" ng-click="ctrl.addTag(tag)"
+                                ng-repeat="tag in post.tags track by $index">{{tag}}</span>
                         </div>
                     </div>
                 </li>
@@ -96,7 +111,6 @@
                     <h4>No posts left...</h4>
                 </li>
             </ul>
-
 
             <!-- Load more posts -->
             <button class="btn btn-block btn-red" ng-if="!ctrl.noImagesLeft" ng-click="ctrl.getPosts('append')">Load More</button>
@@ -119,21 +133,25 @@
         </div>
     </footer>
 
-    <!-- Scripts -->
+    <!-- JQuery -->
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
         crossorigin="anonymous"></script>
+
+    <!-- Bootstrap -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
         crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
+    <script src="js/bootstrap-switch.min.js"></script>
 
+    <!-- AngularJS -->
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.2/angular.min.js"></script>
     <script src="js/ng-infinite-scroll.min.js"></script>
 
+    <!-- Awesomplete -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/awesomplete/1.1.2/awesomplete.min.js"></script>
 
-    <script src="js/bootstrap-switch.min.js"></script>
-
+    <!-- Custom AngularJS Controller -->
     <script src="js/r34-adapter.js"></script>
 </body>
 
