@@ -36,7 +36,7 @@
 
 <body class="dark" ng-app="r34App" ng-controller="r34Ctrl as ctrl" ng-init="ctrl.init()">
     <header class="page-header pt-4">
-        <h1>Browse Rule34</h1>
+        <h1>Browse <a href="https://en.wikipedia.org/wiki/Rule_34_(Internet_meme)">Rule34</a></h1>
     </header>
 
     <main>
@@ -48,46 +48,49 @@
             <form>
 
                 <!-- Tags -->
-                <label for="input_tag">Add tags:</label>
-                <div class="mb-3">
-                    <div class="input-group">
+                <div class="">
+                    <label for="input_tag">Add tags:</label>
+                    <div class="input-group d-flex">
                         <input id="input_tag" type="text" class="form-control">
                         <div class="input-group-append">
-                            <button class="btn btn-red" ng-click="ctrl.addTag()">Add</button>
+                            <button class="btn btn-red" ng-click="ctrl.addTag()" id="btn-add-tag">Add</button>
                         </div>
                     </div>
                     <div class="tags d-flex flex-wrap pl-0 pr-0">
                         <span class="badge badge-tag" ng-click="ctrl.removeTag(tag)" ng-repeat="tag in ctrl.activeTags track by $index">{{tag}}</span>
                     </div>
-                    <small ng-if="ctrl.activeTags.length > 0">Click a tag above to remove it. Click a tag under an image to add it.</small>
                 </div>
 
-                <!-- Sort by-->
-                <div class="form-check form-check-inline mb-3">
+                <!-- Filter -->
+                <div class="form-check mb-1 pl-0">
                     <input type="checkbox" name="approved" id="approved" class="switch">
                     <label for="approved" class="ml-2 mt-2">Only show rated</label>
                 </div>
 
-                <!-- Page size-->
+                <!-- Misc -->
+                <div class="form-check mb-2 pl-0">
+                    <input type="checkbox" name="infiniteScroll" id="infiniteScroll" class="switch">
+                    <label for="approved" class="ml-2 mt-2">Infinite scroll</label>
+                </div>
+
+                <!-- Page size
                 <div class="form-group mb-3">
                     <label for="input_pageSize">Images per page:</label>
                     <input id="input_pageSize" type="number" min="1" max="50" class="form-control" aria-describedby="help_pageSize" ng-model="ctrl.pageSize">
                     <small id="help_pageSize">How many per load? (capped at 50)</small>
-                </div>
+                </div> -->
             </form>
 
             <!-- Get Results-->
             <button class="btn btn-block btn-red" ng-click="ctrl.getPosts('search')">Search</button>
-            <input type="checkbox" name="infiniteScroll" id="infiniteScroll" class="switch">
-            <label for="approved" class="ml-2 mt-2">Infinite scroll</label>
         </section>
 
         <!-- Results -->
-        <section class="container dark" ng-if="ctrl.posts.length > 0" infinite-scroll="infiniteScroll()" infinite-scroll-disabled="infiniteScrollDisabled()">
+        <section class="container dark" ng-if="ctrl.posts.length > 0">
             <h2>Results</h2>
 
             <!-- Posts -->
-            <ul class="list-group list-inline">
+            <ul class="list-group list-inline" infinite-scroll="ctrl.infiniteScroll()" infinite-scroll-distance="3" infinite-scroll-disabled="ctrl.infiniteScrollDisabled()">
                 <li class="list-group-item light-dark" ng-repeat="post in ctrl.posts" ng-attr-id="{{post.id}}">
 
                     <!-- Media -->
@@ -101,14 +104,14 @@
                             <span>Rating: {{post.rating.toUpperCase()}}</span>
                         </div>
                         <div class="tags d-flex flex-wrap">
-                            <span class="badge badge-tag" ng-class="{{ctrl.activeTags.includes(tag) ? 'active' : 'inactive'}}" ng-click="ctrl.addTag(tag)"
+                            <span class="badge badge-tag" ng-class="{{ctrl.activeTags.includes(tag) ? 'active' : 'inactive'}}" ng-click="ctrl.toggleTag(tag)"
                                 ng-repeat="tag in post.tags track by $index">{{tag}}</span>
                         </div>
                     </div>
                 </li>
 
                 <li ng-if="ctrl.noImagesLeft" class="pt-3">
-                    <h4>No posts left...</h4>
+                    <h4>Sadly, there are no more posts...</h4>
                 </li>
             </ul>
 

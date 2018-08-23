@@ -5,55 +5,57 @@ const autoCompleteUrl = "https://rule34.xxx/autocomplete.php";
 // angular
 var app = angular.module('r34App', ['infinite-scroll']);
 app.controller('r34Ctrl', function ($http) {
-    var crtl = this;
+    var controller = this;
 
     // init function
-    crtl.init = function () {
+    controller.init = function () {
 
         // init variables
-        crtl.activeTags = [];
-        crtl.pageId = 0;
-        crtl.pageSize = 10;
-        crtl.noImagesLeft = false;
-        crtl.lastScroll = 0;
-
+        controller.activeTags = [];
+        controller.pageId = 0;
+        controller.pageSize = 10;
+        controller.noImagesLeft = false;
+        controller.lastScroll = 0;
         // init awesomplete
         var input = document.getElementById("input_tag");
         input.addEventListener("input", function () {
-            crtl.getSuggestions();
+            controller.getSuggestions();
         });
-        crtl.awesomplete = new Awesomplete(input, {
+        controller.awesomplete = new Awesomplete(input, {
             minChars: 3,
-            maxItems: 10
+            maxItems: 10,
+            sort: false
         });
+        $("div.awesomplete").addClass("flex-grow-1");
+
 
         // init switches
         $(".switch").bootstrapSwitch();
     };
 
     // get posts
-    crtl.getPosts = function (mode) {
-        crtl.lastScroll = Date.now();
+    controller.getPosts = function (mode) {
+        controller.lastScroll = Date.now();
         let tags = "";
         let page = "";
-        if (crtl.activeTags.length > 0) {
-            tags = "&tags=" + crtl.activeTags.join("+");
+        if (controller.activeTags.length > 0) {
+            tags = "&tags=" + controller.activeTags.join("+");
         }
 
         if (mode === "append") {
-            crtl.pageId++;
-            page = "&pid=" + crtl.pageId;
+            controller.pageId++;
+            page = "&pid=" + controller.pageId;
         } else {
-            crtl.pageId = 0;
-            crtl.noImagesLeft = false;
+            controller.pageId = 0;
+            controller.noImagesLeft = false;
         }
 
-        $http.get(serviceUrl + "/posts?limit=" + crtl.pageSize + tags + page)
+        $http.get(serviceUrl + "/posts?limit=" + controller.pageSize + tags + page)
             .then(function (response) {
                 let posts = response.data;
 
                 if (posts.length === 0) {
-                    crtl.noImagesLeft = true;
+                    controller.noImagesLeft = true;
                 }
 
                 let filtered = false;
@@ -63,13 +65,13 @@ app.controller('r34Ctrl', function ($http) {
                 }
 
                 if (mode === "append") {
-                    crtl.posts.push(...posts);
+                    controller.posts.push(...posts);
                 } else {
-                    crtl.posts = posts;
+                    controller.posts = posts;
                 }
 
-                if (filtered && crtl.posts.length < crtl.pageSize) {
-                    crtl.getPosts("append");
+                if (filtered && controller.posts.length < controller.pageSize) {
+                    controller.getPosts("append");
                 }
             })
             .catch(function (error) {
@@ -78,35 +80,52 @@ app.controller('r34Ctrl', function ($http) {
     };
 
     // collapse details
-    crtl.details = function (postId) {
+    controller.details = function (postId) {
         let selector = "#" + postId + " > .collapse";
         $(selector).collapse("toggle");
     };
 
     // add a tag to selection
-    crtl.addTag = function (tag) {
+    controller.addTag = function (tag) {
         if (tag === undefined) {
             tag = $("#input_tag").val();
             $("#input_tag").val("");
         }
 
-        if (tag && tag != "" && !crtl.activeTags.includes(tag)) {
-            crtl.activeTags.push(tag);
+        tag = tag.toLowerCase();
+
+        if (tag && tag != "" && !controller.activeTags.includes(tag)) {
+            controller.activeTags.push(tag);
         }
     };
 
     // remove a tag from selection
-    crtl.removeTag = function (tag) {
-        crtl.activeTags.splice(crtl.activeTags.indexOf(tag), 1);
+    controller.removeTag = function (tag) {
+        controller.activeTags.splice(controller.activeTags.indexOf(tag), 1);
+    };
+
+    // toggle a tag
+    controller.toggleTag = function (tag) {
+        if (controller.activeTags.includes(tag)) {
+            controller.removeTag(tag);
+        } else {
+            controller.addTag(tag);
+        }
     };
 
     // get tags for awesomplete
-    crtl.getSuggestions = function () {
+    controller.getSuggestions = function () {
         let search = $("#input_tag").val() + "*";
-        if (search.length > crtl.awesomplete.minChars) {
-            $http.get(serviceUrl + "/tags?limit=" + crtl.awesomplete.maxItems + "&name=" + search)
+
+        if (search.length > controller.awesomplete.minChars) {
+            $http.get(serviceUrl + "/tags?limit=" + controller.awesomplete.maxItems + "&name=" + search + "&order_by=posts")
                 .then(function (response) {
-                    crtl.awesomplete.list = response.data.map(tag => tag.name);
+                    controller.awesomplete.list = response.data.map(tag => {
+                        return {
+                            label: tag.name + " (" + tag.posts + ")",
+                            value: tag.name
+                        };
+                    });
                 })
                 .catch(function (error) {
                     console.log(error);
@@ -114,10 +133,10 @@ app.controller('r34Ctrl', function ($http) {
         }
     };
 
-    crtl.vote = function (postId, type) {
+    controller.vote = function (postId, type) {
         $http.get("https://rule34.xxx/index.php?page=post&s=vote&id=" + postId + "&type=" + type)
             .then(function (response) {
-                crtl.posts.find(post => post.id === postId).score = parseInt(response.data);
+                controller.posts.find(post => post.id === postId).score = parseInt(response.data);
             })
             .catch(function (error) {
                 console.log(error);
@@ -125,16 +144,16 @@ app.controller('r34Ctrl', function ($http) {
     };
 
     // load more posts
-    crtl.infiniteScroll = function () {
+    controller.infiniteScroll = function () {
         let now = Date.now();
-        if (now - crtl.lastScroll > 1000) {
-            crtl.getPosts("append");
-            crtl.lastScroll = now;
+        if (now - controller.lastScroll > 1000) {
+            controller.getPosts("append");
+            controller.lastScroll = now;
         }
     };
 
     // check if infinite-scroll should be disabled
-    crtl.infiniteScrollDisabled = function () {
-        return $("#infiniteScroll").prop('checked') !== true || crtl.noImagesLeft;
+    controller.infiniteScrollDisabled = function () {
+        return $("#infiniteScroll").prop('checked') !== true || controller.noImagesLeft;
     };
 });
