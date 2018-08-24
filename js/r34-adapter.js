@@ -26,9 +26,7 @@ app.controller('r34Ctrl', function ($http) {
             maxItems: 10,
             sort: false,
             filter: function (text, input) {
-                let search = input.replace(" ", "_").toLowerCase();
-                let string = text.value;
-                return string.includes(search);
+                return text.includes(tagify(input));
             }
         });
         $("div.awesomplete").addClass("flex-grow-1");
@@ -120,7 +118,7 @@ app.controller('r34Ctrl', function ($http) {
 
     // get tags for awesomplete
     controller.getSuggestions = function () {
-        let search = $("#input_tag").val().replace(" ","_") + "*";
+        let search = tagify($("#input_tag").val()) + "*";
 
         if (search.length > controller.awesomplete.minChars) {
             $http.get(serviceUrl + "/tags?limit=" + controller.awesomplete.maxItems + "&name=" + search + "&order_by=posts")
@@ -162,3 +160,7 @@ app.controller('r34Ctrl', function ($http) {
         return $("#infiniteScroll").prop('checked') !== true || controller.noImagesLeft;
     };
 });
+
+function tagify(text) {
+    return text.toLowerCase().replace(/ /g, "_");
+}
