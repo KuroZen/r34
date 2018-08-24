@@ -24,7 +24,12 @@ app.controller('r34Ctrl', function ($http) {
         controller.awesomplete = new Awesomplete(input, {
             minChars: 3,
             maxItems: 10,
-            sort: false
+            sort: false,
+            filter: function (text, input) {
+                let search = input.replace(" ", "_").toLowerCase();
+                let string = text.value;
+                return string.includes(search);
+            }
         });
         $("div.awesomplete").addClass("flex-grow-1");
 
