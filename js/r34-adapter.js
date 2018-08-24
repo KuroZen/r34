@@ -115,7 +115,7 @@ app.controller('r34Ctrl', function ($http) {
 
     // get tags for awesomplete
     controller.getSuggestions = function () {
-        let search = $("#input_tag").val() + "*";
+        let search = $("#input_tag").val().replace(" ","_") + "*";
 
         if (search.length > controller.awesomplete.minChars) {
             $http.get(serviceUrl + "/tags?limit=" + controller.awesomplete.maxItems + "&name=" + search + "&order_by=posts")
