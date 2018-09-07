@@ -63,10 +63,6 @@ body {
     border: red thin solid;
 }
 
-.badge-tag:first-of-type {
-    margin-left: 0px;
-}
-
 .badge-tag[ng-class="active"] {
     color: black;
     background-color: red;
