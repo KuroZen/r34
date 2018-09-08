@@ -29,6 +29,12 @@ body {
     background-color: black;
 }
 
+body {
+    background-image: url(../assets/53nd-nud35.png);
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
 .dark {
     background-color: black;
     color: white;
